@@ -50,16 +50,18 @@ def generate_draft(original_message: str, instruction: str,
     # For small models like 0.5B, providing clear context and instructions
     # directly in the prompt is crucial for getting good results.
     # Using markers like "Original Message:", "My Instruction:", "Drafted Reply:" helps structure the task.
-    prompt = f"""You are an assistant helping to draft replies to messages.
-Given the following original message and an instruction, please draft a concise and polite reply.
+    prompt = f"""The user received the following message from someone else:
+\"""
+{original_message}
+\"""
 
-Original Message:
-"{original_message}"
+The user wants to send a reply based on this instruction: "{instruction}"
 
-My Instruction:
-"{instruction}"
+Draft a message that the user can send as their reply.
+The reply should directly convey the user's intent based on the instruction.
+IMPORTANT: Write only the reply text itself, do not act as an assistant writing about the reply. Or add anything else other the reply itself.
 
-Drafted Reply:"""
+Reply Draft:"""
 
     # --- Prepare API Request ---
     # Structure the data according to the Ollama /api/chat endpoint requirements.
