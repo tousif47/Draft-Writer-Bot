@@ -16,5 +16,6 @@ if __name__ == "__main__":
     app = DraftBotApp(root)
 
     # 3. Start the tkinter event loop (customtkinter uses the same loop).
-    #    This makes the window visible and interactive.
+    #    This makes the window visible and interactive, and allows the
+    #    asyncio tasks started by the UI to run.
     root.mainloop()
