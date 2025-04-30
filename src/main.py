@@ -1,21 +1,16 @@
 # src/main.py
 
-# Import customtkinter instead of tkinter
 import customtkinter as ctk
-# Import our application window class from the ui module (ui.py file)
+
 from ui import DraftBotApp
 
-# The __name__ == "__main__" block ensures this code only runs
-# when this script is executed directly.
-if __name__ == "__main__":
-    # 1. Create the main root window using customtkinter.
+# Define a main function that sets up and runs the app
+def main():
+    """Initializes and runs the Draft Writer Bot application."""
     root = ctk.CTk()
-
-    # 2. Create an instance of our application class (defined in ui.py),
-    #    passing the customtkinter root window to it.
     app = DraftBotApp(root)
-
-    # 3. Start the tkinter event loop (customtkinter uses the same loop).
-    #    This makes the window visible and interactive, and allows the
-    #    asyncio tasks started by the UI to run.
     root.mainloop()
+
+# This block now calls the main function when the script is run directly
+if __name__ == "__main__":
+    main()

@@ -2,9 +2,7 @@
 
 A simple, privacy-focused Windows desktop application that uses a locally running small language model (via Ollama) to help you quickly draft replies to messages, with streaming output.
 
-**(Optional: Add a Screenshot/GIF Here)**
-![Screenshot Placeholder](https://placehold.co/600x450/2d2d2d/ffffff?text=Draft+Writer+Bot+Screenshot+v2)
-*(Replace the URL above with a link to an actual screenshot of your application)*
+![My App Screenshot](assets/screenshot.png)
 
 ## Features
 
@@ -40,9 +38,7 @@ Before you install and run Draft Writer Bot, you **must** have the following ins
 
 You can install Draft Writer Bot using one of the following methods:
 
-**Option 1: From PyPI (Recommended Method - Once Published)**
-
-*(Note: Replace `draft-writer-bot` with the actual package name on PyPI once published)*
+**Option 1: From PyPI (Recommended Method)**
 
 1.  Open Command Prompt or PowerShell.
 2.  Run the following command:
@@ -56,9 +52,8 @@ You can install Draft Writer Bot using one of the following methods:
 This method is suitable if you want to run the latest development version or modify the code.
 
 1.  **Clone the Repository:**
-    *(Note: Replace `YourUsername/Draft-Writer-Bot` with your actual GitHub username and repository name)*
     ```bash
-    git clone [https://github.com/YourUsername/Draft-Writer-Bot.git](https://github.com/YourUsername/Draft-Writer-Bot.git)
+    git clone [https://github.com/tousif47/Draft-Writer-Bot.git](https://github.com/tousif47/Draft-Writer-Bot.git)
     cd Draft-Writer-Bot
     ```
 2.  **Create Virtual Environment (Recommended):** This keeps the dependencies isolated.
@@ -80,7 +75,6 @@ This method is suitable if you want to run the latest development version or mod
 2.  **If installed from PyPI:**
     * Open your terminal/Command Prompt.
     * Run the application command:
-        *(Note: Replace `draft-writer-bot` with the actual command defined in your package setup)*
         ```bash
         draft-writer-bot
         ```

@@ -1,12 +1,11 @@
 # src/ui.py
 
 import customtkinter as ctk
-from tkinter import messagebox
-import asyncio  # Required for running the async function
-import queue    # Used for thread-safe communication
-import threading # Used to run the async network call in a separate thread
+import asyncio
+import queue
+import threading
 
-# Import the async backend function
+from tkinter import messagebox
 from llm_interface import generate_draft_async
 
 # --- Set Appearance ---
@@ -24,9 +23,10 @@ class DraftBotApp:
     Main application window using CustomTkinter.
     Handles async LLM calls (via threading), streaming output, status updates, and clearing.
     """
+
     def __init__(self, root):
         self.root = root
-        self.root.title("Draft Writer Bot v2 (Async/Threaded)")
+        self.root.title("Draft Writer Bot")
         self.root.minsize(550, 600)
 
         self.is_generating = False
@@ -42,6 +42,7 @@ class DraftBotApp:
 
     def _create_widgets(self):
         """Creates and arranges all the necessary CustomTkinter widgets."""
+
         PAD_X = 15
         PAD_Y_TOP = 15
         PAD_Y_INTER = 7
@@ -95,13 +96,16 @@ class DraftBotApp:
 
     def set_status(self, message: str):
         """Safely updates the status bar text from any thread via the queue."""
+
         # Use the queue to ensure thread safety if called directly from background thread
         # Though typically we'll call this from process_ui_update which is safe.
         self.status_label.configure(text=message)
 
     def clear_all_fields(self):
         """Clears all input and output text boxes and resets status."""
+
         print("Clearing fields...")
+
         # Temporarily enable text boxes to modify them
         self.original_msg_text.configure(state="normal")
         self.instruction_text.configure(state="normal")
@@ -117,6 +121,7 @@ class DraftBotApp:
 
         # Reset status bar
         self.set_status("Ready")
+
         # Ensure generate button is enabled if it was stuck disabled during a clear
         if self.is_generating:
              self.is_generating = False # Reset flag
@@ -124,6 +129,7 @@ class DraftBotApp:
 
     def copy_to_clipboard(self):
         """Copies the content of the generated draft text box to the clipboard."""
+
         try:
             self.generated_draft_text.configure(state="normal")
             text_to_copy = self.generated_draft_text.get("1.0", "end-1c").strip()
@@ -135,6 +141,7 @@ class DraftBotApp:
                 self.root.clipboard_append(text_to_copy)
                 self.root.update() # Make sure it's updated
                 self.set_status("Draft copied to clipboard!")
+
                 # Reset status after a delay (2000ms = 2 seconds)
                 self.root.after(2000, lambda: self.set_status("Ready"))
             elif "Error:" in text_to_copy:
@@ -149,12 +156,12 @@ class DraftBotApp:
             self.set_status("Error: Failed to copy.")
 
     # --- Async Task Handling ---
-
     def start_generate_task(self):
         """
         Initiates the LLM generation task in a separate thread
         to avoid blocking the UI.
         """
+
         if self.is_generating:
             print("Already generating, please wait.")
             return
@@ -170,6 +177,7 @@ class DraftBotApp:
         self.is_generating = True
         self.generate_button.configure(state="disabled", text="Generating...")
         self.set_status("Generating draft...")
+
         # Clear previous output and enable for streaming updates
         self.generated_draft_text.configure(state="normal")
         self.generated_draft_text.delete("1.0", "end")
@@ -205,6 +213,7 @@ class DraftBotApp:
                 # (though generate_draft_async has its own extensive error handling)
                 error_msg = f"Error in background thread: {type(e).__name__} - {e}"
                 print(error_msg)
+
                 # Put the error on the queue so the UI thread knows about it
                 self.ui_update_queue.put((UPDATE_ERROR, error_msg))
 
@@ -220,6 +229,7 @@ class DraftBotApp:
         Periodically checks the queue for updates from the background thread
         and processes them safely in the main UI thread.
         """
+
         try:
             # Get updates from the queue without blocking
             while True: # Process all messages currently in the queue
@@ -234,16 +244,19 @@ class DraftBotApp:
 
     def process_ui_update(self, update_type: str, data: any):
         """Handles updates received from the queue in the UI thread."""
+
         # This function runs in the main UI thread, so it's safe to update widgets.
         if update_type == UPDATE_CHUNK:
             # Append the received text chunk to the output box
             self.generated_draft_text.insert("end", data)
             self.generated_draft_text.see("end") # Auto-scroll
+
             # Keep status as generating while chunks arrive
             self.set_status("Generating...")
         elif update_type == UPDATE_ERROR:
             # Display the error message
             self.generated_draft_text.delete("1.0", "end") # Clear previous content
+            
             # Make error visually distinct (optional)
             error_prefix = "Error:\n"
             self.generated_draft_text.insert("end", error_prefix + str(data))

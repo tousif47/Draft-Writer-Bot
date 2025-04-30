@@ -1,9 +1,9 @@
 # src/llm_interface.py
 
-import httpx  # Asynchronous HTTP client library
-import json   # For parsing JSON stream chunks
-import os     # For environment variables
-import asyncio # For asynchronous operations
+import httpx
+import json
+import os
+import asyncio
 
 # --- Configuration Constants ---
 DEFAULT_MODEL = os.getenv("DWB_MODEL", "qwen2.5:0.5b")
@@ -11,14 +11,15 @@ DEFAULT_OLLAMA_URL = os.getenv("DWB_OLLAMA_URL", "http://localhost:11434")
 REQUEST_TIMEOUT = 60.0 # Timeout for HTTP requests (as float)
 
 # --- Core Async Function with Streaming & Callbacks ---
-
 async def generate_draft_async(
     original_message: str,
     instruction: str,
+
     # --- Callback functions provided by the UI ---
     on_chunk: callable,  # Called with each piece of text received
     on_error: callable,  # Called when an error occurs
     on_done: callable,   # Called when generation finishes successfully
+    
     # --- Optional configuration ---
     model: str = DEFAULT_MODEL,
     ollama_url: str = DEFAULT_OLLAMA_URL
@@ -113,33 +114,40 @@ Reply Draft:"""
         error_msg = f"Connection Error: Could not connect to Ollama at {full_url}. Is Ollama running?\nDetails: {e_conn}"
         print(error_msg)
         on_error(error_msg)
+
     except httpx.TimeoutException as e_timeout:
         error_msg = f"Timeout Error: Request to Ollama timed out after {REQUEST_TIMEOUT} seconds.\nDetails: {e_timeout}"
         print(error_msg)
         on_error(error_msg)
+
     except httpx.HTTPStatusError as e_http:
         # Error raised by response.raise_for_status() for 4xx/5xx status codes
         error_body = "N/A"
+
         try:
             # Try to read the response body for more details
             error_body = await e_http.response.aread()
             error_body = error_body.decode()
+
             # Try parsing as JSON, fallback to raw text
             try:
                 error_detail = json.loads(error_body).get('error', error_body)
             except json.JSONDecodeError:
                 error_detail = error_body
+        
         except Exception as e_read:
             error_detail = f"(Could not read error response body: {e_read})"
 
         error_msg = f"HTTP Error: {e_http.response.status_code} {e_http.response.reason_phrase} for URL {e_http.request.url}.\nOllama Response: {error_detail}"
         print(error_msg)
         on_error(error_msg)
+
     except httpx.RequestError as e_req:
         # Other request-related errors (e.g., invalid URL)
         error_msg = f"Request Error: An unexpected error occurred during the request setup.\nDetails: {e_req}"
         print(error_msg)
         on_error(error_msg)
+
     except Exception as e_general:
         # Catch any other unexpected errors
         error_msg = f"An unexpected error occurred in generate_draft_async: {type(e_general).__name__} - {e_general}"
@@ -150,6 +158,7 @@ Reply Draft:"""
 # --- Direct Execution Block (for basic async testing) ---
 async def main_test():
     """Helper async function to test generate_draft_async directly."""
+    
     print(f"--- Testing llm_interface.py (async) ---")
     print(f"Attempting to connect to Ollama at {DEFAULT_OLLAMA_URL} with model {DEFAULT_MODEL}")
     print("!!! IMPORTANT: Ensure Ollama is running and the model is downloaded (`ollama pull qwen2.5:0.5b`) before running this test. !!!")
