@@ -39,16 +39,16 @@ async def generate_draft_async(
     full_url = f"{ollama_url.rstrip('/')}/api/chat"
 
     # Prompt optimized for small models and clarity
-    prompt = f"""The user received the following message from someone else:
+    prompt = f"""Task: Draft a reply message based on user instructions.
+User received message:
 \"""
 {original_message}
 \"""
+User instruction for reply: "{instruction}"
 
-The user wants to send a reply based on this instruction: "{instruction}"
-
-Draft a short, polite message that the user can send as their reply.
-The reply should directly convey the user's intent based on the instruction.
-IMPORTANT: Write only the reply text itself, do not act as an assistant writing about the reply.
+Your Response MUST be ONLY the drafted reply message itself, suitable for the user to copy and paste directly.
+Do NOT include any preamble, explanation, or conversation like "Here is the draft:" or "Okay, I drafted this:".
+Output ONLY the reply text.
 
 Reply Draft:"""
 
